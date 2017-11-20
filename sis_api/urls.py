@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from base.views import UserView, GradeView
+from base.views import GradeView, RootView, UserView, YearView
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r"^admin/", admin.site.urls),
+    url(r"^$", RootView.as_view()),
     url(r"^user/$", UserView.as_view()),
+    url(r"^quarters/$", YearView.as_view()),
     url(r"^grades/$", GradeView.as_view()),
+    url(r"^grades/quarter/(?P<qnum>[0-9]+)/$", GradeView.as_view()),
+    url(r"^grades/class/(?P<period>[0-9]+)/$", GradeView.as_view()),
 ]

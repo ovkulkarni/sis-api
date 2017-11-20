@@ -25,7 +25,8 @@ class QuarterSerializer(serializers.Serializer):
     name = serializers.CharField(read_only=True)
     start_date = serializers.DateField(read_only=True)
     end_date = serializers.DateField(read_only=True)
-    courses = CourseSerializer(many=True)
+    index = serializers.CharField(read_only=True, max_length=4)
+    courses = CourseSerializer(required=False, many=True)
 
 
 class YearSerializer(serializers.Serializer):
