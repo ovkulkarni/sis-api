@@ -22,6 +22,7 @@ class CourseSerializer(serializers.Serializer):
 
 
 class QuarterSerializer(serializers.Serializer):
+    name = serializers.CharField(read_only=True)
     start_date = serializers.DateField(read_only=True)
     end_date = serializers.DateField(read_only=True)
     courses = CourseSerializer(many=True)
