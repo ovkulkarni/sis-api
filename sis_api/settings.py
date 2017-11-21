@@ -25,6 +25,11 @@ SECRET_KEY = '9hd7+_(7l$984*fb5gd5*52kn*n9x)-3ce=c925&v)1-u4zu$l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "FALSE").upper() == "TRUE"
 
+try:
+    from .secret import *
+except ImportError:
+    pass
+
 ALLOWED_HOSTS = ["sis.okulkarni.me", "localhost", "127.0.0.1"]
 
 
@@ -37,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
+    'base',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'base.backends.SISAuthBackend',
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -125,8 +136,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'base.backends.SISBasicAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.IsAuthenticated'
     ]
 }
-SIS_ENDPOINT = "https://sisstudent.fcps.edu/SVUE/Service/PXPCommunication.asmx"
+
+AUTH_USER_MODEL = 'base.User'
