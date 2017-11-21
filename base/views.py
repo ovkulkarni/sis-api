@@ -48,6 +48,6 @@ class YearView(APIView):
         return Response(serializer.data)
 
 
-def logout(request):
+def logout_view(request):
     request.session.clear()
     return redirect("//log:out@{}/".format(request.get_host()))

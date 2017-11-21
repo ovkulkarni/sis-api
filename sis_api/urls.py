@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from base.views import GradeView, RootView, UserView, YearView
+from base.views import logout_view, GradeView, RootView, UserView, YearView
 
 urlpatterns = [
     url(r"^admin/", admin.site.urls),
     url(r"^$", RootView.as_view()),
+    url(r"^logout/$", logout_view)
     url(r"^user/$", UserView.as_view()),
     url(r"^quarters/$", YearView.as_view()),
     url(r"^grades/$", GradeView.as_view()),
