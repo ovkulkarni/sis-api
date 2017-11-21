@@ -63,7 +63,7 @@ def get_user_data(request):
     data['grade'] = ch.find("Grade").get_text()
     data['photo'] = ch.find("photo").get_text()
     data.update(get_schedule(request))
-    cache.set(key, data, 600)
+    cache.set(key, data, 60 * 30)
     return data
 
 
@@ -83,7 +83,7 @@ def get_schedule(request):
         class_data['teacher'] = c.get("Teacher")
         classes.append(class_data)
     data['schedule'] = list(sorted(classes, key=lambda c: int(c['period'])))
-    cache.set(key, data, 600)
+    cache.set(key, data, 60 * 30)
     return data
 
 
@@ -136,7 +136,7 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
     data['start_date'] = parse(q.get("StartDate")).date()
     data['end_date'] = parse(q.get("EndDate")).date()
     data['name'] = q.get("GradePeriod")
-    cache.set(key, data, 600)
+    cache.set(key, data, 60 * 30)
     return data
 
 
@@ -154,5 +154,5 @@ def get_year_data(request):
             return qdata
         quarters.append(qdata)
     data['quarters'] = quarters
-    cache.set(key, data, 600)
+    cache.set(key, data, 60 * 30)
     return data
