@@ -16,6 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from base.views import logout_view, GradeView, RootView, UserView, YearView
+from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register(r'devices', FCMDeviceAuthorizedViewSet)
 
 urlpatterns = [
     url(r"^admin/", admin.site.urls),
@@ -26,4 +30,5 @@ urlpatterns = [
     url(r"^grades/$", GradeView.as_view()),
     url(r"^grades/quarter/(?P<qnum>[0-9]+)/$", GradeView.as_view()),
     url(r"^grades/class/(?P<period>[0-9]+)/$", GradeView.as_view()),
+    url(r'^', include(router.urls))
 ]

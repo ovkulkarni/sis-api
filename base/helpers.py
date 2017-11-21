@@ -70,7 +70,7 @@ def get_user_data(request):
 def get_schedule(request):
     key = "{}:{}".format(request.user.username, "StudentClassList")
     cached = cache.get(key)
-    if cached and not request.POST.get("force"):
+    if cached and not request.GET.get("force"):
         return cached
     xml_data = base_data(request, "StudentClassList")
     data = dict()
@@ -98,7 +98,7 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
         part2 = "Current"
     key = "{}:{}".format(request.user.username, part2)
     cached = cache.get(key)
-    if cached and not request.POST.get("force"):
+    if cached and not request.GET.get("force"):
         return cached
     xml_data = base_data(request, "Gradebook",
                          extra_params="&lt;ReportPeriod&gt;{}&lt;/ReportPeriod&gt;".format(qnum) if qnum else "")
@@ -143,7 +143,7 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
 def get_year_data(request):
     key = "{}:{}".format(request.user.username, "Year")
     cached = cache.get(key)
-    if cached and not request.POST.get("force"):
+    if cached and not request.GET.get("force"):
         return cached
     xml_data = base_data(request, "Gradebook")
     data = dict()

@@ -14,14 +14,11 @@ class SISAuthBackend(object):
         xml_data = api_request(username, password, "GetPXPMessages")
         if xml_data.find("RT_ERROR"):
             return None
-        user, created = User.objects.get_or_create(username=username,
-                                                   defaults={'firebase_device_id': request.GET.get("firebase_device_id", "")})
+        user, created = User.objects.get_or_create(username=username)
         if request.GET.get("save_password"):
             user.encrypted_password = settings.CIPHER.encrypt(password)
         else:
             request.session['password'] = password
-        if user.firebase_device_id != request.GET.get("firebase_device_id", ""):
-            user.firebase_device_id = request.GET.get("firebase_device_id", "")
         user.save()
         return user
 

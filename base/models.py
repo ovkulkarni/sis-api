@@ -6,7 +6,6 @@ from django.contrib.auth.models import AbstractBaseUser
 
 class User(AbstractBaseUser):
     username = models.CharField(unique=True, max_length=16)
-    firebase_device_id = models.CharField(max_length=2048, null=True, blank=True)
     encrypted_password = models.CharField(max_length=4096, null=True, blank=True)
 
     USERNAME_FIELD = "username"
