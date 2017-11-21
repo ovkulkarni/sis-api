@@ -76,6 +76,13 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'caches',
+    }
+}
+
 WSGI_APPLICATION = 'sis_api.wsgi.application'
 
 
