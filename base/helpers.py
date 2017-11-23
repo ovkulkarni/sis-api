@@ -63,7 +63,7 @@ def get_user_data(request):
     data['grade'] = ch.find("Grade").get_text()
     data['photo'] = ch.find("photo").get_text()
     data.update(get_schedule(request))
-    cache.set(key, data, 60 * 30)
+    cache.set(key, data, 60 * 60 * 24 * 7)
     return data
 
 

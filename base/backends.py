@@ -1,10 +1,12 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import auth
 
 from rest_framework import authentication, exceptions
 from rest_framework.authentication import SessionAuthentication
 
-from .helpers import api_request
+from .management.commands.check_for_updates import FakeRequest
+from .helpers import api_request, get_user_data
 from .models import User
 
 
@@ -19,6 +21,9 @@ class SISAuthBackend(object):
             user.encrypted_password = settings.CIPHER.encrypt(password)
         else:
             request.session['password'] = password
+        key = "{}:ChildList".format(user.username)
+        if not cache.get(key):
+            get_user_data(FakeRequest(user, password=password))
         user.save()
         return user
 
