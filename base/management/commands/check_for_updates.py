@@ -28,7 +28,8 @@ class Command(BaseCommand):
                     for assignment in course['assignments']:
                         if assignment not in cached['courses'][i]['assignments']:
                             for device in devices:
-                                device.send_message(title="Grade Posted: {}".format(
-                                    course['name']), body="{}: {}".format(assignment['name'], assignment['score']))
+                                device.send_message(title="Grade Posted: {}".format(course['name']),
+                                                    body="{}: {}".format(assignment['name'], assignment['score']),
+                                                    data=course)
                                 print('Sent notification to {}, device {}'.format(device.user.username, device.registration_id))
         print('Successfully finished sending notifications')
