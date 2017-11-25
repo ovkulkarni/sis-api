@@ -180,7 +180,7 @@ def get_report_card(request):
 
 
 def get_year_data(request):
-    key = "{}:{}".format(request.user.username, "Year")
+    key = "Year"
     cached = cache.get(key)
     if cached and not request.GET.get("force"):
         return cached
