@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from base.views import logout_view, GradeView, RootView, UserView, YearView
+from base.views import logout_view, GradeView, ReportCardView, RootView, UserView, YearView
 from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
@@ -27,6 +27,7 @@ urlpatterns = [
     url(r"^logout/$", logout_view),
     url(r"^user/$", UserView.as_view()),
     url(r"^quarters/$", YearView.as_view()),
+    url(r"^report_card/$", ReportCardView.as_view()),
     url(r"^grades/$", GradeView.as_view()),
     url(r"^grades/quarter/(?P<qnum>[0-9]+)/$", GradeView.as_view()),
     url(r"^grades/class/(?P<period>[0-9]+)/$", GradeView.as_view()),

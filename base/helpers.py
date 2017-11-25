@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 from dateutil.parser import parse
+from html import unescape
 from requests import post
 from bs4 import BeautifulSoup
 
@@ -29,12 +30,12 @@ def _raw_api_request(username, password, action, extra_params=""):
         </v:Envelope>
         """
     r = post(settings.SIS_ENDPOINT, data=xml.format(username, password, action, extra_params), headers=headers)
-    return r.text.replace("&lt;", "<").replace("&gt;", ">")
+    return unescape(r.text)
 
 
 def api_request(username, password, action, extra_params=""):
     content = _raw_api_request(username, password, action, extra_params)
-    parsed = BeautifulSoup(content, "xml")
+    parsed = BeautifulSoup(str(content), "xml")
     return parsed
 
 
@@ -87,9 +88,11 @@ def get_schedule(request):
     return data
 
 
-def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
+def get_quarter_grades(request, qnum, periodnum, skip_courses=False, skip_assignments=False):
     if qnum and skip_courses:
         part2 = "Quarter{}:NoGrades".format(qnum)
+    elif qnum and skip_assignments:
+        part2 = "Quarter{}:NoAssignments".format(qnum)
     elif qnum:
         part2 = "Quarter{}".format(qnum)
     elif periodnum:
@@ -111,21 +114,38 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
             class_data['name'] = c.get("Title")
             class_data['location'] = c.get("Room")
             class_data['teacher'] = c.get("Staff")
-            m = c.find("Mark")
-            class_data['grade_letter'] = m.get("CalculatedScoreString")
-            class_data['grade_percentage'] = m.get("CalculatedScoreRaw")
-            assignments = []
-            for a in c.find_all("Assignment"):
-                assignment_data = dict()
-                assignment_data['name'] = a.get("Measure")
-                assignment_data['assignment_type'] = a.get("Type")
-                assignment_data['date'] = parse(a.get("Date")).date()
-                assignment_data['due_date'] = parse(a.get("DueDate")).date()
-                assignment_data['score'] = a.get("Score")
-                assignment_data['points'] = a.get("Points")
-                assignment_data['notes'] = a.get("Notes")
-                assignments.append(assignment_data)
-            class_data['assignments'] = assignments
+            grades = dict()
+            for m in c.find_all("Mark"):
+                name = m.get("MarkName")
+                grade_data = dict()
+                grade_data['letter'] = m.get("CalculatedScoreString")
+                grade_data['percentage'] = m.get("CalculatedScoreRaw")
+                if name == "1st Qtr":
+                    grades['first_quarter'] = grade_data
+                elif name == "2nd Qtr":
+                    grades['second_quarter'] = grade_data
+                elif name == "3rd Qtr":
+                    grades['third_quarter'] = grade_data
+                elif name == "4th Qtr":
+                    grades['fourth_quarter'] = grade_data
+                elif name == "1st Semester":
+                    grades['first_semester'] = grade_data
+                elif name == "2nd Semester":
+                    grades['second_semester'] = grade_data
+            class_data['grades'] = grades
+            if not skip_assignments:
+                assignments = []
+                for a in c.find_all("Assignment"):
+                    assignment_data = dict()
+                    assignment_data['name'] = a.get("Measure")
+                    assignment_data['assignment_type'] = a.get("Type")
+                    assignment_data['date'] = parse(a.get("Date")).date()
+                    assignment_data['due_date'] = parse(a.get("DueDate")).date()
+                    assignment_data['score'] = a.get("Score")
+                    assignment_data['points'] = a.get("Points")
+                    assignment_data['notes'] = a.get("Notes")
+                    assignments.append(assignment_data)
+                class_data['assignments'] = assignments
             classes.append(class_data)
         data['courses'] = list(sorted(classes, key=lambda c: int(c['period'])))
     q = xml_data.find(lambda l: l.name == "ReportPeriod" and (l.get("Index") == qnum if qnum else parse(
@@ -140,6 +160,25 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False):
     return data
 
 
+def get_report_card(request):
+    key = "{}:{}".format(request.user.username, "ReportCard")
+    cached = cache.get(key)
+    if cached and not request.GET.get("force"):
+        return cached
+    xml_data = base_data(request, "Gradebook")
+    data = dict()
+    courses = dict()
+    for q in xml_data.find_all("ReportPeriod"):
+        qdata = get_quarter_grades(request, qnum=q.get("Index"), periodnum="", skip_assignments=True)
+        for course in qdata['courses']:
+            if course['period'] not in courses:
+                courses[course['period']] = course
+            courses[course['period']]['grades'].update(course['grades'])
+    data['courses'] = [courses[k] for k in sorted(courses)]
+    cache.set(key, data, 60 * 60 * 24 * 7)
+    return data
+
+
 def get_year_data(request):
     key = "{}:{}".format(request.user.username, "Year")
     cached = cache.get(key)
@@ -150,9 +189,7 @@ def get_year_data(request):
     quarters = []
     for q in xml_data.find_all("ReportPeriod"):
         qdata = get_quarter_grades(request, qnum=q.get("Index"), periodnum="", skip_courses=True)
-        if qdata.get('error'):
-            return qdata
         quarters.append(qdata)
     data['quarters'] = quarters
-    cache.set(key, data, 60 * 30)
+    cache.set(key, data, 60 * 60 * 24 * 7 * 4)
     return data
