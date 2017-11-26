@@ -32,7 +32,7 @@ class CourseSerializer(serializers.Serializer):
     name = serializers.CharField(read_only=True, max_length=256)
     location = serializers.CharField(read_only=True, max_length=256)
     assignments = AssignmentSerializer(required=False, many=True)
-    grades = GradesSerializer()
+    grades = GradesSerializer(required=False)
     teacher = serializers.CharField(read_only=True, max_length=128)
 
 
