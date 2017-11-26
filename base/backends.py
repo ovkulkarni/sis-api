@@ -17,11 +17,10 @@ class SISAuthBackend(object):
         if xml_data.find("RT_ERROR"):
             return None
         user, created = User.objects.get_or_create(username=username)
-        if request.GET.get("save_password"):
+        if request.GET.get("save_password") or request.POST.get("save_password"):
             user.encrypted_password = settings.CIPHER.encrypt(password)
-            user.fcmdevice_set.update(active=True)
         else:
-            user.fcmdevice_set.update(active=False)
+            user.fcmdevice_set.all().delete()
             user.encrypted_password = None
             request.session['password'] = password
         key = "{}:ChildList".format(user.username)
