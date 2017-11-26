@@ -30,7 +30,7 @@ def check_user_updates(user):
                     for device in devices:
                         device.send_message(title="Grade Posted: {}".format(course['name']),
                                             body="{}: {}".format(assignment['name'], assignment['score']),
-                                            data=loads(JSONRenderer().render(course)))
+                                            data={'data': JSONRenderer().render(course).decode("utf-8")})
                         print('Sent notification to {}, device {}'.format(device.user.username, device.registration_id))
 
 
