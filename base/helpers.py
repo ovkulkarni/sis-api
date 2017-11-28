@@ -78,7 +78,7 @@ def get_schedule(request):
     classes = []
     for c in xml_data.find_all("ClassListing"):
         class_data = dict()
-        class_data['period'] = c.get("Period")
+        class_data['period'] = c.get("Period")[0]
         class_data['name'] = c.get("CourseTitle")
         class_data['location'] = c.get("RoomName")
         class_data['teacher'] = c.get("Teacher")
@@ -110,7 +110,7 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False, skip_assign
         classes = []
         for c in xml_data.find_all(lambda l: l.name == "Course" and (l.get("Period") == periodnum if periodnum else True)):
             class_data = dict()
-            class_data['period'] = c.get("Period")
+            class_data['period'] = c.get("Period")[0]
             class_data['name'] = c.get("Title")
             class_data['location'] = c.get("Room")
             class_data['teacher'] = c.get("Staff")
