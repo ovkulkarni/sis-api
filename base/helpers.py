@@ -83,7 +83,7 @@ def get_schedule(request):
         class_data['location'] = c.get("RoomName")
         class_data['teacher'] = c.get("Teacher")
         classes.append(class_data)
-    data['schedule'] = list(sorted(classes, key=lambda c: int(c['period'])))
+    data['schedule'] = list(sorted(classes, key=lambda c: int(c['period'][0])))
     cache.set(key, data, 60 * 30)
     return data
 
@@ -147,7 +147,7 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False, skip_assign
                     assignments.append(assignment_data)
                 class_data['assignments'] = assignments
             classes.append(class_data)
-        data['courses'] = list(sorted(classes, key=lambda c: int(c['period'])))
+        data['courses'] = list(sorted(classes, key=lambda c: int(c['period'][0])))
     q = xml_data.find(lambda l: l.name == "ReportPeriod" and (l.get("Index") == qnum if qnum else parse(
         l.get("StartDate")).date() <= timezone.now().date() <= parse(l.get("EndDate")).date()))
     if not q:
