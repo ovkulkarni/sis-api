@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 
 def _raw_api_request(username, password, action, extra_params=""):
     headers = {
+        "User-Agent": "kSOAP/2.0",
         "SOAPAction": "http://edupoint.com/webservices/ProcessWebServiceRequest",
         "Content-Type": "text/xml"
     }
