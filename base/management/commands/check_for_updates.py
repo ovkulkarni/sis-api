@@ -27,7 +27,7 @@ def check_user_updates(user):
             course = new_grades['courses'][i]
             for assignment in course['assignments']:
                 if assignment not in cached['courses'][i]['assignments']:
-                    if assignment['score'] == "Not Due":
+                    if "Not" in assignment['score']:
                         continue
                     for device in devices:
                         device.send_message(data={'title': "Grade Posted: {}".format(course['name'].split("(")[0].strip()),
