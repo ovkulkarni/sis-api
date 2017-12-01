@@ -21,7 +21,7 @@ def _raw_api_request(username, password, action, extra_params=""):
             <ProcessWebServiceRequest xmlns="http://edupoint.com/webservices/" id="o0" c:root="1">
               <userID i:type="d:string">{}</userID>
               <password i:type="d:string">{}</password>
-              <skipLoginLog i:type="d:string">false</skipLoginLog>
+              <skipLoginLog i:type="d:string">true</skipLoginLog>
               <parent i:type="d:string">false</parent>
               <webServiceHandleName i:type="d:string">PXPWebServices</webServiceHandleName>
               <methodName i:type="d:string">{}</methodName>
