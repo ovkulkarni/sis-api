@@ -41,6 +41,6 @@ class Command(BaseCommand):
     help = 'Runs notifications for updates in grades'
 
     def handle(self, *args, **options):
-        with Pool(4) as pool:
+        with Pool(2) as pool:
             pool.map(check_user_updates, User.objects.filter(encrypted_password__isnull=False))
         print('Successfully finished sending notifications')
