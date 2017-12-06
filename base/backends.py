@@ -20,7 +20,6 @@ class SISAuthBackend(object):
         if request.GET.get("save_password") or request.POST.get("save_password"):
             user.encrypted_password = settings.CIPHER.encrypt(password)
         else:
-            user.fcmdevice_set.all().delete()
             user.encrypted_password = None
             request.session['password'] = password
         key = "{}:ChildList".format(user.username)
