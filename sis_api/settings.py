@@ -25,6 +25,12 @@ SECRET_KEY = '9hd7+_(7l$984*fb5gd5*52kn*n9x)-3ce=c925&v)1-u4zu$l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "FALSE").upper() == "TRUE"
 
+TEST_USER = "testUser"
+TEST_GRADE_DATA = {}
+TEST_REPORT_CARD_DATA = {}
+TEST_YEAR_DATA = {}
+
+
 try:
     from .secret import *
 except ImportError:

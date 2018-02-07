@@ -13,6 +13,9 @@ from .models import User
 class SISAuthBackend(object):
 
     def authenticate(self, request, username=None, password=None):
+        if username == settings.TEST_USER:
+            user, created = User.objects.get_or_create(username=username)
+            return user
         xml_data = api_request(username, password, "GetPXPMessages")
         if xml_data.find("RT_ERROR"):
             return None
