@@ -5,6 +5,7 @@ from dateutil.parser import parse
 from html import unescape
 from requests import post
 from bs4 import BeautifulSoup
+from xml.sax.saxutils import escape
 
 
 def _raw_api_request(username, password, action, extra_params=""):
@@ -30,7 +31,7 @@ def _raw_api_request(username, password, action, extra_params=""):
           </v:Body>
         </v:Envelope>
         """
-    r = post(settings.SIS_ENDPOINT, data=xml.format(username, password, action, extra_params), headers=headers)
+    r = post(settings.SIS_ENDPOINT, data=xml.format(username, escape(password), action, extra_params), headers=headers) # , verify=False)
     return unescape(r.text)
 
 
@@ -121,6 +122,17 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False, skip_assign
                 grade_data = dict()
                 grade_data['letter'] = m.get("CalculatedScoreString")
                 grade_data['percentage'] = m.get("CalculatedScoreRaw")
+                breakdown = dict()
+                for summary in m.find_all("GradeCalculationSummary"):
+                    for gc in summary.find_all("AssignmentGradeCalc"):
+                        breakdown[gc.get("Type")] = {
+                            'points': gc.get("Points"),
+                            'points_possible': gc.get("PointsPossible"),
+                            'weight': gc.get("Weight").strip("%"),
+                            'letter_grade': gc.get("CalculatedMark"),
+                            'percentage': gc.get("WeightedPct").strip("%")
+                        }
+                grade_data['breakdown'] = breakdown
                 if name == "1st Qtr":
                     grades['first_quarter'] = grade_data
                 elif name == "2nd Qtr":

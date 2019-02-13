@@ -10,10 +10,10 @@ class AssignmentSerializer(serializers.Serializer):
     points = serializers.CharField(read_only=True, max_length=256)
     notes = serializers.CharField(read_only=True, max_length=4096)
 
-
 class GradeSerializer(serializers.Serializer):
     letter = serializers.CharField(read_only=True, allow_null=True, max_length=8)
     percentage = serializers.CharField(read_only=True, allow_null=True, max_length=8)
+    breakdown = serializers.DictField(read_only=True, allow_null=True)
 
 
 class GradesSerializer(serializers.Serializer):

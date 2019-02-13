@@ -19,6 +19,7 @@ class FakeRequest(object):
 def check_user_updates(user):
     print("Checking for updates for {}".format(user))
     devices = user.fcmdevice_set.filter(active=True)
+    print("{} has devices with id's {}".format(user.username, ["{}: {}".format(device.registration_id, "Active" if device.active else "Inactive") for device in devices]))
     key = "{}:{}".format(user.username, "Current")
     cached = cache.get(key)
     new_grades = get_quarter_grades(FakeRequest(user, force=True), "", "")
@@ -30,10 +31,14 @@ def check_user_updates(user):
                     if "Not" in assignment['score']:
                         continue
                     for device in devices:
-                        device.send_message(data={'title': "Grade Posted: {}".format(course['name'].split("(")[0].strip()),
-                                                  'body': "{}: {}".format(assignment['name'], assignment['score']),
-                                                  'extra': JSONRenderer().render(course).decode("utf-8")
-                                                  })
+                        device.send_message(title="Grade Posted: {}".format(course['name'].split("(")[0].strip()), body="{}: {}".format(assignment['name'], assignment['score']))
+                        # if device.type == "ios":
+                        #     device.send_message(title="Grade Posted: {}".format(course['name'].split("(")[0].strip()), body="{}: {}".format(assignment['name'], assignment['score']))
+                        # else:
+                        #     device.send_message(data={'title': "Grade Posted: {}".format(course['name'].split("(")[0].strip()),
+                        #                           'body': "{}: {}".format(assignment['name'], assignment['score']),
+                        #                           'extra': JSONRenderer().render(course).decode("utf-8")
+                        #                           })
                         print('Sent notification to {}, device {}'.format(device.user.username, device.registration_id))
 
 

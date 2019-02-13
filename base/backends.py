@@ -8,6 +8,9 @@ from rest_framework.authentication import SessionAuthentication
 from .management.commands.check_for_updates import FakeRequest
 from .helpers import api_request, get_user_data
 from .models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SISAuthBackend(object):
@@ -21,7 +24,7 @@ class SISAuthBackend(object):
             return None
         user, created = User.objects.get_or_create(username=username)
         if request.GET.get("save_password") or request.POST.get("save_password"):
-            user.encrypted_password = settings.CIPHER.encrypt(password)
+            user.encrypted_password = settings.CIPHER.encrypt(password).decode()
         else:
             user.encrypted_password = None
             request.session['password'] = password

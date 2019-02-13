@@ -30,13 +30,22 @@ TEST_GRADE_DATA = {}
 TEST_REPORT_CARD_DATA = {}
 TEST_YEAR_DATA = {}
 
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 try:
     from .secret import *
 except ImportError:
     pass
 
-ALLOWED_HOSTS = ["sis.okulkarni.me", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["sisapi.sites.tjhsst.edu", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -93,15 +102,7 @@ CACHES = {
 WSGI_APPLICATION = 'sis_api.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation
