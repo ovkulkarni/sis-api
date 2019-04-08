@@ -107,6 +107,8 @@ def get_quarter_grades(request, qnum, periodnum, skip_courses=False, skip_assign
         return cached
     xml_data = base_data(request, "Gradebook",
                          extra_params="&lt;ReportPeriod&gt;{}&lt;/ReportPeriod&gt;".format(qnum) if qnum else "")
+    if xml_data.find('RT_ERROR') is not None and not request.GET.get("force"):
+        return cached
     data = dict()
     if not skip_courses:
         classes = []
