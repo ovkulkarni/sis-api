@@ -16,7 +16,7 @@ decorator==4.1.2
 Django==1.11.20
 django-extensions==1.9.7
 django-uuidfield==0.5.0
-djangorestframework==3.7.3
+djangorestframework==3.9.1
 fcm-django==0.2.19
 Flask==1.0.2
 funcsigs==0.4
